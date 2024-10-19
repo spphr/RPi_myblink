@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <wiringPi.h>
-#include <pthread.h>
 #include <string.h>
 #include <time.h>
 
@@ -20,29 +19,7 @@ void timeprint(char *str)
 
 int main(int argc, char *argv[]) 
 {
-    int num, period, pON;
-    if (argc < 3)
-    {
-        fprintf(stderr, "Requires 3 arguments");
-        exit(EXIT_FAILURE);
-    }
-    for (int i = 1; i < argc; i++) {
-        num = atoi(argv[i]);
-        if (num < 0) 
-        {
-            fprintf(stderr, "ERROR: argv must be greater than or equal to 0");
-            exit(EXIT_FAILURE);
-        }
-        switch(i)
-        {
-        case 1:
-            period = num;
-            break;
-        case 2:
-            pON = num;
-            break;
-        }
-    }
+    int period = atoi(argv[1]), pON = atoi(argv[2]);
 
     wiringPiSetupGpio();
     pinMode(GPIO_PIN, OUTPUT);

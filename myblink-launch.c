@@ -8,27 +8,26 @@ int period = 2000;
 int pON = 50;
 
 /*start-stop-daemon -[param] [path] -- [args]*/
-int start(char *param)
+int start(void)
 {
-    sprintf(buf, "sudo start-stop-daemon %s %s -- %d %d", param, path, period, pON);
+    sprintf(buf, "sudo start-stop-daemon -Sbvx %s -- %d %d", path, period, pON);
     system(buf);
     return 0;
 }
 
-void stop(char *param)
+void stop(void)
 {
-    sprintf(buf, "sudo start-stop-daemon %s %s", param, path);
+    sprintf(buf, "sudo start-stop-daemon -Kvx %s", path);
     system(buf);
 }
 
 int main(int argc, char *argv[])
 {
-    char buf[100];
     int num;
 
     if (argc < 2) {
-        printf("Requires 1 or more arguments");
-        return 0;
+        fprintf(stderr, "Requires 1 or more arguments\n");
+        exit(EXIT_FAILURE);
     }
     else
         for (int i = 2; i < argc; i++) 
@@ -36,8 +35,8 @@ int main(int argc, char *argv[])
             num = atoi(argv[i]);
             if (num < 0) 
             {
-                printf("ERROR: argv must be greater than or equal to 0");
-                return 0;
+                fprintf(stderr, "Argv must be greater than or equal to 0\n");
+                exit(EXIT_FAILURE);
             }
             switch(i)
             {
@@ -50,10 +49,16 @@ int main(int argc, char *argv[])
             }
         }
 
-    if (argv[1][1] == 'S')
-        start(argv[1]);
-    else if (argv[1][1] == 'K')
-        stop(argv[1]);
+    if (strcmp(argv[1], "start") == 0)
+    {
+        if (start())
+        {
+            fprintf(stderr, "Can't start programm");
+            exit(EXIT_FAILURE);
+        }
+    } 
+    else if (strcmp(argv[1], "stop") == 0)
+        stop();
 
     return 0;
 }
