@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 const char path[] = "home/rom/Freenove_Kit/Code/C_Code/mycode/myblink/myblink";
 char buf[200];
@@ -19,6 +20,12 @@ void stop(void)
 {
     sprintf(buf, "sudo start-stop-daemon -Kvx %s", path);
     system(buf);
+}
+
+int restart(void)
+{
+    stop();
+    return start();
 }
 
 int main(int argc, char *argv[])
@@ -56,9 +63,19 @@ int main(int argc, char *argv[])
             fprintf(stderr, "Can't start programm");
             exit(EXIT_FAILURE);
         }
-    } 
+    }
     else if (strcmp(argv[1], "stop") == 0)
         stop();
+    else if (strcmp(argv[1], "restart") == 0)
+    {
+        if (restart())
+        {
+            fprintf(stderr, "Can't restart programm");
+            exit(EXIT_FAILURE);
+        }
+    }
+    else
+        printf("Unknown command\n");
 
     return 0;
 }
